@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.28307.489
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BABurgess.XmlApiDbContext", "BABurgess.XmlApiDbContext\BABurgess.XmlApiDbContext.csproj", "{A7020C8E-E1DD-47BB-8129-457FE898ABA9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XmlApiDbContextTests", "XmlApiDbContextTests\XmlApiDbContextTests.csproj", "{9CB611BC-7ADC-4F28-855D-83797363F2D5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{A7020C8E-E1DD-47BB-8129-457FE898ABA9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A7020C8E-E1DD-47BB-8129-457FE898ABA9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A7020C8E-E1DD-47BB-8129-457FE898ABA9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9CB611BC-7ADC-4F28-855D-83797363F2D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9CB611BC-7ADC-4F28-855D-83797363F2D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9CB611BC-7ADC-4F28-855D-83797363F2D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9CB611BC-7ADC-4F28-855D-83797363F2D5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

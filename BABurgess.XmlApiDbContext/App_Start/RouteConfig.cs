@@ -16,6 +16,7 @@ namespace BABurgess.XmlApiDbContext
                 routeTemplate: "{controller}/{id}",
                 defaults: new { id = RouteParameter.Optional }
             );
+
         }
     }
 }

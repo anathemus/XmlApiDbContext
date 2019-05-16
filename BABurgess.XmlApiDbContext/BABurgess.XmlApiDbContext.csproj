@@ -160,11 +160,15 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\SwaggerConfig.cs" />
     <Compile Include="Constants.cs" />
-    <Compile Include="Controllers\ValuesController.cs" />
+    <Compile Include="Controllers\XmlApiController.cs" />
+    <Compile Include="Controllers\XmlEncryptedStorage.cs" />
     <Compile Include="Handlers\ExceptionFilter.cs" />
     <Compile Include="Handlers\ExceptionLogger.cs" />
     <Compile Include="Handlers\OptionsHttpMessageHandler.cs" />
     <Compile Include="Handlers\CacheControlMiddleware.cs" />
+    <Compile Include="Models\AccountModel.cs" />
+    <Compile Include="Models\Stock.cs" />
+    <Compile Include="Models\Transaction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Startup.cs" />
@@ -177,7 +181,9 @@
       <DependentUpon>Web.config</DependentUpon>
     </None>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

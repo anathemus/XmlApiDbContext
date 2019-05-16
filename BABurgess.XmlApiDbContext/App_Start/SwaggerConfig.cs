@@ -17,7 +17,7 @@ namespace BABurgess.XmlApiDbContext
             config
                 .EnableSwagger(c =>
                 {
-                    c.SingleApiVersion("v1", "A title for your API");
+                    c.SingleApiVersion("v1", "XmlApiDbContext by Benjamin Burgess");
                     c.PrettyPrint();
                     c.RootUrl(x =>
                     {
