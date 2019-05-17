@@ -83,8 +83,8 @@ namespace BABurgess.XmlApiDbContext
         }
 
         [HttpGet]
-        [ActionName("Swagger")]
-        public RedirectResult Swagger()
+        [ActionName("SwaggerUi")]
+        public RedirectResult SwaggerUi()
         {
             return Redirect("https://baburgessxmlapidbcontext.azurewebsites.net/swagger/ui/index");
         }
