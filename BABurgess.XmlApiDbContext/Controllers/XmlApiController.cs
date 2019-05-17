@@ -42,10 +42,30 @@ namespace BABurgess.XmlApiDbContext
         }
 
         // GET <controller>
-        public IEnumerable<string> Get()
+        public HttpResponseMessage Get([FromBody]string value)
         {
-            Logger.Information("URL: {HttpRequestUrl}");
-            return new string[] { "value1", "value2" };
+            XmlSerializer serializer = new XmlSerializer(typeof(AccountModel));
+
+            string path = GetFilePath(ParseAccount(value));
+            string jsonResponse = "";
+
+            if (File.Exists(path))
+            {
+                FileStream file = new FileStream(path, FileMode.Open, FileAccess.Read);
+                jsonResponse = serializer.Deserialize(file).ToString();
+
+                HttpStatusCode code = HttpStatusCode.OK;
+                HttpResponseMessage message = new HttpResponseMessage(code);
+                message.Content = new StringContent(jsonResponse);
+                return message;
+            }
+            else
+            {
+                HttpStatusCode code = HttpStatusCode.NotFound;
+                HttpResponseMessage message = new HttpResponseMessage(code);
+                message.ReasonPhrase = "Account not found.";
+                return message;
+            }
         }
 
         /// <summary>
@@ -65,47 +85,18 @@ namespace BABurgess.XmlApiDbContext
             throw new Exception("Example exception");
         }
 
-        // GET <controller>/?u=username&p=password
-        public HttpResponseMessage Get(string u, string p)
-        {
-            XmlSerializer serializer = new XmlSerializer(typeof(AccountModel));
+        // GET <controller>/?sym=symbol
+        //public HttpResponseMessage Get(string sym)
+        //{
 
-            string jsonResponse = "";
-            string filename = u + ".xml";
-            string path = @"D:\Source\BABurgess.XmlApiDbContext\BABurgess.XmlApiDbContext\App_Data\"
-                        + filename;
-
-            if (File.Exists(path))
-            {
-                FileStream file = new FileStream(path, FileMode.Open, FileAccess.Read);
-                jsonResponse = serializer.Deserialize(file).ToString();
-
-                HttpStatusCode code = HttpStatusCode.OK;
-                HttpResponseMessage message = new HttpResponseMessage(code);
-                message.Content = new StringContent(jsonResponse);
-                return message;
-            }
-            else
-            {
-                HttpStatusCode code = HttpStatusCode.NotFound;
-                HttpResponseMessage message = new HttpResponseMessage(code);
-                message.ReasonPhrase = "Account with Username not found.";
-                return message;
-            }
-        }
+        //}
 
         // POST <controller>
         public HttpResponseMessage Post([FromBody]string value)
         {
-            AccountModel model = new AccountModel();
+            AccountModel model = ParseAccount(value);
+            string path = GetFilePath(model);
             XmlSerializer serializer = new XmlSerializer(typeof(AccountModel));
-            byte[] byteArray = Encoding.ASCII.GetBytes(value);
-            MemoryStream stream = new MemoryStream(byteArray);
-            model = serializer.Deserialize(stream) as AccountModel;
-
-            string filename = model.UserId + ".xml";
-            string path = @"D:\Source\BABurgess.XmlApiDbContext\BABurgess.XmlApiDbContext\App_Data\"
-                        + filename;
 
             if (!File.Exists(path))
             {
@@ -128,20 +119,13 @@ namespace BABurgess.XmlApiDbContext
         }
 
         // PUT <controller>/?u=username&p=password
-        public HttpResponseMessage Put(string u, string p, [FromBody]string value)
+        public HttpResponseMessage Put([FromBody]string value)
         {
-            AccountModel model = new AccountModel();
+            AccountModel model = ParseAccount(value);
+            string path = GetFilePath(model);
             XmlSerializer serializer = new XmlSerializer(typeof(AccountModel));
-            byte[] byteArray = Encoding.ASCII.GetBytes(value);
-            MemoryStream stream = new MemoryStream(byteArray);
-            model = serializer.Deserialize(stream) as AccountModel;
-
-            if (model.UserId == u && model.PasswordHash == p)
+            if (File.Exists(path))
             {
-                string filename = model.UserId + ".xml";
-                string path = @"D:\Source\BABurgess.XmlApiDbContext\BABurgess.XmlApiDbContext\App_Data\"
-                            + filename;
-
                 FileStream file = new FileStream(path, FileMode.Truncate, 
                     FileAccess.ReadWrite);
                 serializer.Serialize(file, model);
@@ -162,12 +146,9 @@ namespace BABurgess.XmlApiDbContext
         }
 
         // DELETE <controller>/?u=username&p=password
-        public HttpResponseMessage Delete(string u, string p)
+        public HttpResponseMessage Delete([FromBody]string value)
         {
-            string filename = u + ".xml";
-            string path = @"D:\Source\BABurgess.XmlApiDbContext\BABurgess.XmlApiDbContext\App_Data\"
-                        + filename;
-
+            string path = GetFilePath(ParseAccount(value));
             if (File.Exists(path))
             {
                 File.Delete(path);
@@ -183,6 +164,24 @@ namespace BABurgess.XmlApiDbContext
                 message.ReasonPhrase = "Account not found.";
                 return message;
             }
+        }
+
+        private AccountModel ParseAccount(string body)
+        {
+            AccountModel model = new AccountModel();
+            XmlSerializer serializer = new XmlSerializer(typeof(AccountModel));
+            byte[] byteArray = Encoding.ASCII.GetBytes(body);
+            MemoryStream stream = new MemoryStream(byteArray);
+            model = serializer.Deserialize(stream) as AccountModel;
+
+            return model;
+        }
+
+        private string GetFilePath(AccountModel model)
+        {
+            string filename = model.UserName + ".xml";
+            string path = Environment.CurrentDirectory + "/" + filename;
+            return path;
         }
     }
 }
