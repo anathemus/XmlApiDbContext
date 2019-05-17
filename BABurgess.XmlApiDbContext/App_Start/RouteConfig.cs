@@ -13,9 +13,8 @@ namespace BABurgess.XmlApiDbContext
 
             config.Routes.MapHttpRoute(
                 name: "DefaultApi",
-                routeTemplate: "{controller}/{action}/{id}",
-                defaults: new { controller = "XmlApi", action = "SwaggerUi",
-                    id = RouteParameter.Optional }
+                routeTemplate: "{controller}/{id}",
+                defaults: new { id = RouteParameter.Optional }
             );
 
         }
