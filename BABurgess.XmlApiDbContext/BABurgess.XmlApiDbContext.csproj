@@ -145,6 +145,7 @@
     <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="hostingstart.html" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>

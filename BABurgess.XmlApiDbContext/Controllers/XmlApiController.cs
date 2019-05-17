@@ -42,10 +42,6 @@ namespace BABurgess.XmlApiDbContext
             Logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public RedirectResult Get()
-        {
-            return Redirect(Environment.CurrentDirectory + "/swagger/ui/index");
-        }
         // GET <controller>
         public HttpResponseMessage Get([FromBody]string value)
         {

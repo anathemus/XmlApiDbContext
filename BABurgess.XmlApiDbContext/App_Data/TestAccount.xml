@@ -13,7 +13,7 @@
     <user_id>12345</user_id>
     <transaction_id>00000000-0000-0000-0000-000000000000</transaction_id>
     <transaction_type>PurchaseStock</transaction_type>
-    <timestamp>2019-05-15T16:27:51.5959494-04:00</timestamp>
+    <timestamp>2019-05-17T07:04:43.748906-04:00</timestamp>
     <symbol>BZZ</symbol>
     <stock_price>12.97</stock_price>
     <quantity>10000</quantity>
