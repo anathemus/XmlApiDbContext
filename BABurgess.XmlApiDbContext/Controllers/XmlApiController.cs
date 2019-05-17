@@ -11,6 +11,7 @@ using BABurgess.XmlApiDbContext.Controllers;
 using System.Net.Http;
 using System.Net;
 using System.Web.Http.Results;
+using System.Threading.Tasks;
 
 namespace BABurgess.XmlApiDbContext
 {
@@ -42,31 +43,50 @@ namespace BABurgess.XmlApiDbContext
             Logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
+
         // GET <controller>
         public HttpResponseMessage Get([FromBody]string value)
         {
-            XmlSerializer serializer = new XmlSerializer(typeof(AccountModel));
-
-            string path = GetFilePath(ParseAccount(value));
-            string jsonResponse = "";
-
-            if (File.Exists(path))
+            AccountModel model = ParseAccount(value);
+            if (model.UserName == null)
             {
-                FileStream file = new FileStream(path, FileMode.Open, FileAccess.Read);
-                jsonResponse = serializer.Deserialize(file).ToString();
-
-                HttpStatusCode code = HttpStatusCode.OK;
+                HttpStatusCode code = HttpStatusCode.Redirect;
                 HttpResponseMessage message = new HttpResponseMessage(code);
-                message.Content = new StringContent(jsonResponse);
+                message.Headers.Location = new Uri("https://baburgessxmlapidbcontext.azurewebsites.net/swagger/ui/index");
                 return message;
             }
             else
             {
-                HttpStatusCode code = HttpStatusCode.NotFound;
-                HttpResponseMessage message = new HttpResponseMessage(code);
-                message.ReasonPhrase = "Account not found.";
-                return message;
+                XmlSerializer serializer = new XmlSerializer(typeof(AccountModel));
+
+                string path = GetFilePath(ParseAccount(value));
+                string jsonResponse = "";
+
+                if (File.Exists(path))
+                {
+                    FileStream file = new FileStream(path, FileMode.Open, FileAccess.Read);
+                    jsonResponse = serializer.Deserialize(file).ToString();
+
+                    HttpStatusCode code = HttpStatusCode.OK;
+                    HttpResponseMessage message = new HttpResponseMessage(code);
+                    message.Content = new StringContent(jsonResponse);
+                    return message;
+                }
+                else
+                {
+                    HttpStatusCode code = HttpStatusCode.NotFound;
+                    HttpResponseMessage message = new HttpResponseMessage(code);
+                    message.ReasonPhrase = "Account not found.";
+                    return message;
+                }
             }
+        }
+
+        [HttpGet]
+        [ActionName("Swagger")]
+        public RedirectResult Swagger()
+        {
+            return Redirect("https://baburgessxmlapidbcontext.azurewebsites.net/swagger/ui/index");
         }
 
         /// <summary>
@@ -167,6 +187,7 @@ namespace BABurgess.XmlApiDbContext
             }
         }
 
+        [NonAction]
         private AccountModel ParseAccount(string body)
         {
             AccountModel model = new AccountModel();
@@ -178,6 +199,7 @@ namespace BABurgess.XmlApiDbContext
             return model;
         }
 
+        [NonAction]
         private string GetFilePath(AccountModel model)
         {
             string filename = model.UserName + ".xml";
