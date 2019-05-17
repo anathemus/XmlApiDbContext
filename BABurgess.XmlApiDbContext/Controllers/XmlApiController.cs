@@ -10,6 +10,7 @@ using System.Xml.Serialization;
 using BABurgess.XmlApiDbContext.Controllers;
 using System.Net.Http;
 using System.Net;
+using System.Web.Http.Results;
 
 namespace BABurgess.XmlApiDbContext
 {
@@ -41,6 +42,10 @@ namespace BABurgess.XmlApiDbContext
             Logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
+        public RedirectResult Get()
+        {
+            return Redirect(Environment.CurrentDirectory + "/swagger/ui/index");
+        }
         // GET <controller>
         public HttpResponseMessage Get([FromBody]string value)
         {
