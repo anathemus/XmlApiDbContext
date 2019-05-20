@@ -1,4 +1,5 @@
 ﻿using Swashbuckle.Application;
+using Swashbuckle.SwaggerUi;
 using System;
 using System.IO;
 using System.Reflection;
@@ -17,13 +18,25 @@ namespace BABurgess.XmlApiDbContext
             config
                 .EnableSwagger(c =>
                 {
-                    c.SingleApiVersion("v1", "XmlApiDbContext by Benjamin Burgess");
-                    c.PrettyPrint();
                     c.RootUrl(x =>
                     {
                         var idx = x.RequestUri.AbsoluteUri.IndexOf("swagger", StringComparison.InvariantCultureIgnoreCase);
                         return x.RequestUri.AbsoluteUri.Substring(0, idx - 1);
                     });
+                    c.SingleApiVersion("v1", "XmlApiDbContext by Benjamin Burgess")
+                    .Description("An ASP.NET Web Api for a financial trading service."
+                    + "The information is passed in plaintext XML format. \nIt is then"
+                    + "encrypted and stored. \nWhen retrieved, it is decrypted back into"
+                    + " plaintext XML and passed back.")
+                    .Contact(cc => cc
+                    .Name("Benjamin Burgess")
+                    .Email("benjamin.a.burgess@outlook.com")
+                    .Url("https://benjaminaburgess.azurewebsites.net"))
+                    .License(l => l
+                    .Name("MIT Licence")
+                    .Url("https://opensource.org/licenses/MIT"));
+                    c.PrettyPrint();
+
 
                     // This code allow you to use XML-comments
                     var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;

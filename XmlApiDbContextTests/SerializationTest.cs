@@ -6,41 +6,38 @@ using System.Text;
 using System.Xml.Serialization;
 using BABurgess.XmlApiDbContext.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Serilog;
-using AutoMapper;
-using System.Web.Http;
+using BABurgess.XmlApiDbContext.Helpers;
 
 namespace XmlApiDbContextTests
 {
     [TestClass]
     public class SerializationTest
     {
-        public AccountModel SetupTestModel()
+        public FinancialAccountUser SetupTestModel()
         {
-            AccountModel model = new AccountModel();
+            FinancialAccountUser model = new FinancialAccountUser();
 
             model.UserName = "BABurgess";
-            model.UserId = "12345";
+            model.Id = "12345";
             model.PasswordHash = GetHashString("reallybigpassword");
-            model.AvailableBalance = 1000000000.00M;
+            model.AvailableBalance = "1000000000.00";
             model.Stocks = new List<Stock>();
             model.Transactions = new List<Transaction>();
             Stock stock = new Stock();
             stock.Symbol = "BZZ";
             stock.UserId = "12345";
-            stock.PurchasePrice = 12.97M;
-            stock.Quantity = 10000;
+            stock.PurchasePrice = "12.97";
+            stock.Quantity = "10000";
             model.Stocks.Add(stock);
             Transaction transaction = new Transaction();
-            transaction.Timestamp = DateTime.Now;
+            transaction.Timestamp = DateTime.Now.ToString();
             transaction.UserId = "12345";
             transaction.TypeTransaction = Transaction.TransactionType.PurchaseStock;
             transaction.TransactionId = new Guid().ToString();
             transaction.Symbol = "BZZ";
-            transaction.StockPrice = 12.97M;
-            transaction.Quantity = 10000;
-            transaction.FundsChange = 0 - (transaction.StockPrice
-                * transaction.Quantity);
+            transaction.StockPrice = "12.97";
+            transaction.Quantity = "10000";
+            transaction.FundsChange = "-12970.00";
             model.Transactions.Add(transaction);
 
             return model;
@@ -48,8 +45,8 @@ namespace XmlApiDbContextTests
         [TestMethod]
         public void TestMethod1()
         {
-            AccountModel model = SetupTestModel();
-            XmlSerializer serializer = new XmlSerializer(typeof(AccountModel));
+            FinancialAccountUser model = SetupTestModel();
+            XmlSerializer serializer = new XmlSerializer(typeof(FinancialAccountUser));
             string path = @"D:\Source\BABurgess.XmlApiDbContext\"
                     + @"BABurgess.XmlApiDbContext\App_Data\"
                     + "TestAccount.xml";
@@ -65,12 +62,33 @@ namespace XmlApiDbContextTests
         {
             string postBody = "";
 
-            XmlSerializer serializer = new XmlSerializer(typeof(AccountModel));
+            XmlSerializer serializer = new XmlSerializer(typeof(FinancialAccountUser));
             using (StringWriter writer = new StringWriter())
             {
                 serializer.Serialize(writer, SetupTestModel());
                 postBody = writer.ToString();
             }
+            Console.WriteLine(postBody);
+            Assert.IsNotNull(postBody);
+        }
+
+        [TestMethod]
+        public void EncryptedStorageTest1()
+        {
+            FinancialAccountUser user = SetupTestModel();
+            string postBody = String.Empty;
+
+            XmlSerializer serializer = new XmlSerializer(typeof(FinancialAccountUser));
+            using (StringWriter writer = new StringWriter())
+            {
+                serializer.Serialize(writer, user);
+                postBody = writer.ToString();
+            }
+            string encryptedFile = StringEncryption.EncryptString(postBody, user.PasswordHash);
+            string finalFile = StringEncryption.EmbedUserString(encryptedFile, user.PasswordHash);
+
+            Console.WriteLine(finalFile);
+            Assert.IsNotNull(finalFile);
         }
 
         public static byte[] GetHash(string inputString)

@@ -1,20 +1,18 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Xml.Serialization;
+﻿using System.Xml.Serialization;
 
 namespace BABurgess.XmlApiDbContext.Models
 {
+    [XmlType(TypeName = "Transaction")]
     public class Transaction
     {
         private string userId;
-        [XmlElement(ElementName = "user_id")]
+        [XmlElement(ElementName = "UserId")]
         public string UserId
         {
             get { return userId; }
             set { userId = value; }
         }
-        [XmlElement(ElementName = "transaction_id")]
+        [XmlElement(ElementName = "TransactionId")]
         public string TransactionId { get; set; }
         public enum TransactionType
         {
@@ -23,17 +21,17 @@ namespace BABurgess.XmlApiDbContext.Models
             PurchaseStock,
             SellStock
         }
-        [XmlElement(ElementName = "transaction_type")]
+        [XmlElement(ElementName = "TransactionType")]
         public TransactionType TypeTransaction { get; set; }
-        [XmlElement(ElementName = "timestamp")]
-        public DateTime Timestamp { get; set; }
-        [XmlElement(ElementName = "symbol")]
+        [XmlElement(ElementName = "Timestamp")]
+        public string Timestamp { get; set; }
+        [XmlElement(ElementName = "Symbol")]
         public string Symbol { get; set; }
-        [XmlElement(ElementName = "stock_price")]
-        public decimal StockPrice { get; set; }
-        [XmlElement(ElementName = "quantity")]
-        public long Quantity { get; set; }
-        [XmlElement(ElementName = "funds_change")]
-        public decimal FundsChange { get; set; }
+        [XmlElement(ElementName = "StockPrice")]
+        public string StockPrice { get; set; }
+        [XmlElement(ElementName = "Quantity")]
+        public string Quantity { get; set; }
+        [XmlElement(ElementName = "FundsChange")]
+        public string FundsChange { get; set; }
     }
 }

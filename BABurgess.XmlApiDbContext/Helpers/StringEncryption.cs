@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using System.Web;
+using System.Collections.Generic;
 
-namespace BABurgess.XmlApiDbContext.Controllers
+namespace BABurgess.XmlApiDbContext.Helpers
 {
-    public static class XmlEncryptedStorage
+    public static class StringEncryption
     {
         public static string EncryptString(string encryptString, string userPassHash)
         {
@@ -57,6 +55,26 @@ namespace BABurgess.XmlApiDbContext.Controllers
                 }
             }
             return cipherText;
+        }
+
+        public static string EmbedUserString(string encryptedString, string passwordHash)
+        {
+            StringBuilder builder = new StringBuilder(encryptedString);
+            builder.Insert((builder.Length / 3), "&" + passwordHash + "&");
+
+            return builder.ToString();
+        }
+
+        public static string DecryptUserAccount(string encryptedString, string passwordHash)
+        {
+            List<string> stringParts = new List<string>();
+            string xmlAgain = String.Empty;
+            stringParts.AddRange(encryptedString.Split('&'));
+            if (stringParts[1] == passwordHash)
+            {
+                xmlAgain = StringEncryption.DecryptString((stringParts[0] + stringParts[2]), passwordHash);
+            }
+            return xmlAgain;
         }
     }
 }

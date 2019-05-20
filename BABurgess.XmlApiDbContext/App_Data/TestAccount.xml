@@ -1,23 +1,27 @@
 <?xml version="1.0"?>
-<account xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="account">
-  <user_id>12345</user_id>
-  <username>BABurgess</username>
-  <password_hash>7D262C7E35BE9D46EF8E151A244B645E4182C3BD19F636D2F0E0E22F6A98B03E</password_hash>
-  <stocks>
-    <user_id>12345</user_id>
-    <symbol>BZZ</symbol>
-    <purchase_price>12.97</purchase_price>
-    <quantity>10000</quantity>
-  </stocks>
-  <transactions>
-    <user_id>12345</user_id>
-    <transaction_id>00000000-0000-0000-0000-000000000000</transaction_id>
-    <transaction_type>PurchaseStock</transaction_type>
-    <timestamp>2019-05-17T07:04:43.748906-04:00</timestamp>
-    <symbol>BZZ</symbol>
-    <stock_price>12.97</stock_price>
-    <quantity>10000</quantity>
-    <funds_change>-129700.00</funds_change>
-  </transactions>
-  <available_balance>1000000000.00</available_balance>
-</account>
+<Account xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="FinancialAccount">
+  <UserName>BABurgess</UserName>
+  <Id>12345</Id>
+  <PasswordHash>7D262C7E35BE9D46EF8E151A244B645E4182C3BD19F636D2F0E0E22F6A98B03E</PasswordHash>
+  <AvailableBalance>1000000000.00</AvailableBalance>
+  <Stocks>
+    <Stock>
+      <UserId>12345</UserId>
+      <Symbol>BZZ</Symbol>
+      <PurchasePrice>12.97</PurchasePrice>
+      <Quantity>10000</Quantity>
+    </Stock>
+  </Stocks>
+  <Transactions>
+    <Transaction>
+      <UserId>12345</UserId>
+      <TransactionId>00000000-0000-0000-0000-000000000000</TransactionId>
+      <TransactionType>PurchaseStock</TransactionType>
+      <Timestamp>5/19/2019 5:22:43 PM</Timestamp>
+      <Symbol>BZZ</Symbol>
+      <StockPrice>12.97</StockPrice>
+      <Quantity>10000</Quantity>
+      <FundsChange>-12970.00</FundsChange>
+    </Transaction>
+  </Transactions>
+</Account>

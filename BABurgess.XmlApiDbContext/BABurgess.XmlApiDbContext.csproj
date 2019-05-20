@@ -35,7 +35,7 @@
     <WarningLevel>4</WarningLevel>
     <NoWarn>CS1591</NoWarn>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <DocumentationFile>bin\BABurgess.XmlApiDbContext.xml</DocumentationFile>
+    <DocumentationFile>bin\XmlApiDbContext.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -161,12 +161,12 @@
     <Compile Include="App_Start\SwaggerConfig.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Controllers\XmlApiController.cs" />
-    <Compile Include="Controllers\XmlEncryptedStorage.cs" />
     <Compile Include="Handlers\ExceptionFilter.cs" />
     <Compile Include="Handlers\ExceptionLogger.cs" />
     <Compile Include="Handlers\OptionsHttpMessageHandler.cs" />
     <Compile Include="Handlers\CacheControlMiddleware.cs" />
-    <Compile Include="Models\AccountModel.cs" />
+    <Compile Include="Helpers\StringEncryption.cs" />
+    <Compile Include="Models\FinancialAccountUser.cs" />
     <Compile Include="Models\Stock.cs" />
     <Compile Include="Models\Transaction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

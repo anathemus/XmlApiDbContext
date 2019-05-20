@@ -2,16 +2,14 @@
 using BABurgess.XmlApiDbContext.Models;
 using Serilog;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Web.Http;
 using System.Xml.Serialization;
-using BABurgess.XmlApiDbContext.Controllers;
 using System.Net.Http;
 using System.Net;
-using System.Web.Http.Results;
-using System.Threading.Tasks;
+using BABurgess.XmlApiDbContext.Helpers;
+using System.Web.Http.Description;
 
 namespace BABurgess.XmlApiDbContext
 {
@@ -43,12 +41,22 @@ namespace BABurgess.XmlApiDbContext
             Logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-
-        // GET <controller>
-        public HttpResponseMessage Get([FromBody]string value)
+        // GET - redirects to Swagger Ui
+        public HttpResponseMessage Get()
         {
-            AccountModel model = ParseAccount(value);
-            if (model.UserName == null)
+            HttpStatusCode code = HttpStatusCode.Redirect;
+            HttpResponseMessage message = new HttpResponseMessage(code);
+            message.Headers.Location = new Uri("https://baburgessxmlapidbcontext.azurewebsites.net/swagger/ui/index");
+            return message;
+        }
+
+        // GET <controller>/?p=passwordhash
+        [Route("")]
+        [ResponseType(typeof(FinancialAccountUser))]
+        public HttpResponseMessage Get([FromBody]string value, string p)
+        {
+            FinancialAccountUser model = ParseAccount(value);
+            if (model.UserName == null || p == null)
             {
                 HttpStatusCode code = HttpStatusCode.Redirect;
                 HttpResponseMessage message = new HttpResponseMessage(code);
@@ -57,15 +65,22 @@ namespace BABurgess.XmlApiDbContext
             }
             else
             {
-                XmlSerializer serializer = new XmlSerializer(typeof(AccountModel));
+                XmlSerializer serializer = new XmlSerializer(typeof(FinancialAccountUser));
 
-                string path = GetFilePath(ParseAccount(value));
-                string jsonResponse = "";
+                string path = GetFilePath(p);
 
                 if (File.Exists(path))
                 {
+                    string jsonResponse = String.Empty;
                     FileStream file = new FileStream(path, FileMode.Open, FileAccess.Read);
-                    jsonResponse = serializer.Deserialize(file).ToString();
+                    string encryptedFile = String.Empty;
+
+                    using (StreamReader stream = new StreamReader(file))
+                    {
+                        encryptedFile = stream.ReadToEnd();
+                    }
+                    
+                    jsonResponse = StringEncryption.DecryptUserAccount(encryptedFile, p);
 
                     HttpStatusCode code = HttpStatusCode.OK;
                     HttpResponseMessage message = new HttpResponseMessage(code);
@@ -80,13 +95,6 @@ namespace BABurgess.XmlApiDbContext
                     return message;
                 }
             }
-        }
-
-        [HttpGet]
-        [ActionName("SwaggerUi")]
-        public RedirectResult SwaggerUi()
-        {
-            return Redirect("https://baburgessxmlapidbcontext.azurewebsites.net/swagger/ui/index");
         }
 
         /// <summary>
@@ -106,18 +114,13 @@ namespace BABurgess.XmlApiDbContext
             throw new Exception("Example exception");
         }
 
-        // GET <controller>/?sym=symbol
-        //public HttpResponseMessage Get(string sym)
-        //{
-
-        //}
 
         // POST <controller>
-        public HttpResponseMessage Post([FromBody]string value)
+        public HttpResponseMessage Post([FromBody]string value, string p)
         {
-            AccountModel model = ParseAccount(value);
-            string path = GetFilePath(model);
-            XmlSerializer serializer = new XmlSerializer(typeof(AccountModel));
+            FinancialAccountUser model = ParseAccount(value);
+            string path = GetFilePath(p);
+            XmlSerializer serializer = new XmlSerializer(typeof(FinancialAccountUser));
 
             if (!File.Exists(path))
             {
@@ -133,18 +136,18 @@ namespace BABurgess.XmlApiDbContext
                 HttpStatusCode code = HttpStatusCode.Found;
                 HttpResponseMessage message = new HttpResponseMessage(code);
                 message.ReasonPhrase = "Account found! Creation not necessary. Redirecting";
-                message.Headers.Location = new Uri(Environment.CurrentDirectory + "?u="
-                    + model.UserId + "&p=" +model.PasswordHash);
+                message.Headers.Location = new Uri(Environment.CurrentDirectory + "?p="
+                    + model.PasswordHash);
                 return message;
             }
         }
 
         // PUT <controller>/?u=username&p=password
-        public HttpResponseMessage Put([FromBody]string value)
+        public HttpResponseMessage Put([FromBody]string value, string p)
         {
-            AccountModel model = ParseAccount(value);
-            string path = GetFilePath(model);
-            XmlSerializer serializer = new XmlSerializer(typeof(AccountModel));
+            FinancialAccountUser model = ParseAccount(value);
+            string path = GetFilePath(p);
+            XmlSerializer serializer = new XmlSerializer(typeof(FinancialAccountUser));
             if (File.Exists(path))
             {
                 FileStream file = new FileStream(path, FileMode.Truncate, 
@@ -166,10 +169,10 @@ namespace BABurgess.XmlApiDbContext
             }
         }
 
-        // DELETE <controller>/?u=username&p=password
-        public HttpResponseMessage Delete([FromBody]string value)
+        // DELETE <controller>/?p=password
+        public HttpResponseMessage Delete(string p)
         {
-            string path = GetFilePath(ParseAccount(value));
+            string path = GetFilePath(p);
             if (File.Exists(path))
             {
                 File.Delete(path);
@@ -188,21 +191,21 @@ namespace BABurgess.XmlApiDbContext
         }
 
         [NonAction]
-        private AccountModel ParseAccount(string body)
+        private FinancialAccountUser ParseAccount(string body)
         {
-            AccountModel model = new AccountModel();
-            XmlSerializer serializer = new XmlSerializer(typeof(AccountModel));
+            FinancialAccountUser model = new FinancialAccountUser();
+            XmlSerializer serializer = new XmlSerializer(typeof(FinancialAccountUser));
             byte[] byteArray = Encoding.ASCII.GetBytes(body);
             MemoryStream stream = new MemoryStream(byteArray);
-            model = serializer.Deserialize(stream) as AccountModel;
+            model = serializer.Deserialize(stream) as FinancialAccountUser;
 
             return model;
         }
 
         [NonAction]
-        private string GetFilePath(AccountModel model)
+        private string GetFilePath(string p)
         {
-            string filename = model.UserName + ".xml";
+            string filename = p + ".xml";
             string path = Environment.CurrentDirectory + "/" + filename;
             return path;
         }
